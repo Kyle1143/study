@@ -1,0 +1,10 @@
+numpy
+matplotlib
+ipdb
+
+pytest
+pre-commit
+
+black
+isort[pyproject]
+flake8
