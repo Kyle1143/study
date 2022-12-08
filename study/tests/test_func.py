@@ -1,11 +1,12 @@
 # テストしたい関数を呼び出す
 import numpy as np
-
-from asarin import softmax
-from asarin import predict
-from asarin import cross_entropy_error
-from asarin import loss_function
-from asarin import numerical_gradient
+from asarin import (
+    cross_entropy_error,
+    loss_function,
+    numerical_gradient,
+    predict,
+    softmax,
+)
 
 # def test_softmax():
 #     # 入力xを作る
@@ -104,7 +105,7 @@ from asarin import numerical_gradient
 #         pre = pre.reshape(1, pre.size)
 
 
-#     # # ここだけ手計算用　
+#     # # ここだけ手計算用
 #     # #-0.69314718055995 + -0.35667494393873 + -0.22314355131421
 #     # # 0.42431667
 #     # y1 = [[0.5, 0.4, 0.1],[0.7, 0.2, 0.1],[0.1, 0.8, 0.1]]
@@ -121,36 +122,36 @@ from asarin import numerical_gradient
 
 
 # def test_loss_function():
-    # # 入力xを作る
-    # # ランダムに行列を生成
-    # x = np.random.rand(100, 784)
-    # assert x.shape == (100,784), print('Shape Size Error')
+# # 入力xを作る
+# # ランダムに行列を生成
+# x = np.random.rand(100, 784)
+# assert x.shape == (100,784), print('Shape Size Error')
 
-    # # 入力tを作る
-    # a = np.random.randint(10,size=(100))
-    # # print("a.shape: {}, a: {}".format(a.shape, a))
-    # assert a.shape == (100, ), print("shape error02")
-    # a_one_hot = np.identity(10)[a]
-    # assert a_one_hot.shape == (100, 10), print("shape error03")
-    # t = a_one_hot
-    # # print("t.shape: {}, t: {}".format(t.shape, t))
-    # assert t.shape == (100, 10), print("shape error04")
-    # # one-hotの確認assert
-    # assert all([sum(b)==1 for b in t]), print('one-hot error05')
+# # 入力tを作る
+# a = np.random.randint(10,size=(100))
+# # print("a.shape: {}, a: {}".format(a.shape, a))
+# assert a.shape == (100, ), print("shape error02")
+# a_one_hot = np.identity(10)[a]
+# assert a_one_hot.shape == (100, 10), print("shape error03")
+# t = a_one_hot
+# # print("t.shape: {}, t: {}".format(t.shape, t))
+# assert t.shape == (100, 10), print("shape error04")
+# # one-hotの確認assert
+# assert all([sum(b)==1 for b in t]), print('one-hot error05')
 
-    # ここだけ手計算用　
-    # x1 (3✖️9行列)
-    # x1 = [[0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1], [0.1, 0.1, 0.1, 0.1,
-    #                                                       0.1, 0.1, 0.1, 0.2, 0.1], [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1]]
-    # t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
-    # x = np.array(x1)
-    # assert x.shape == (3, 9), "x shape error"
-    # t = np.array(t1)
-    # assert t.shape == (3, 3), "t shape error"
+# ここだけ手計算用
+# x1 (3✖️9行列)
+# x1 = [[0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1], [0.1, 0.1, 0.1, 0.1,
+#                                                       0.1, 0.1, 0.1, 0.2, 0.1], [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1]]
+# t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
+# x = np.array(x1)
+# assert x.shape == (3, 9), "x shape error"
+# t = np.array(t1)
+# assert t.shape == (3, 3), "t shape error"
 
-    # L = loss_function(x, t)
-    # assert isinstance(L, float), 'Shape Error'
-    # print("L.shape: {}, loss-function: {}".format(L.shape, L))
+# L = loss_function(x, t)
+# assert isinstance(L, float), 'Shape Error'
+# print("L.shape: {}, loss-function: {}".format(L.shape, L))
 
 
 def test_numerical_gradient():
@@ -176,10 +177,13 @@ def test_numerical_gradient():
     # assert y.shape == (100,784), print('y Shape Size Error')
     # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
-    # ここだけ手計算用　
+    # ここだけ手計算用
     # x1 (3✖️9行列)
-    x1 = [[0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1], [0.1, 0.1, 0.1, 0.1,
-                                                          0.1, 0.1, 0.1, 0.2, 0.1], [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1]]
+    x1 = [
+        [0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1],
+        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
+        [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1],
+    ]
     t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
     x = np.array(x1)
     assert x.shape == (3, 9), "x shape error"
@@ -188,7 +192,7 @@ def test_numerical_gradient():
 
     # numerical_gradient(関数(loss), 微分したい変数(x))
     y = numerical_gradient(loss_function, x, t)
-    assert y.shape == (3,9), print('y Shape Size Error')
+    assert y.shape == (3, 9), print("y Shape Size Error")
     print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
 

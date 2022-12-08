@@ -1,12 +1,12 @@
 # ここのpylanceのエラーは一旦無視
-import numpy as np
-import matplotlib.pylab as plt
 import sys
 
 # デバッガーを使う
 # set_trace()をおくと，その行で止まる
 from pdb import set_trace
 
+import matplotlib.pylab as plt
+import numpy as np
 
 # from mnist import load_mnist # load_mnistファイルを実行
 
@@ -26,11 +26,13 @@ from pdb import set_trace
 # 完成！
 
 # 一つにしか対応していない -> 行列に対応していない
+
+
 def softmax(x):
     y = np.zeros_like(x)
     for i in range(x.shape[0]):
         a = np.max(x[i])  # a：入力xの最大値 OK
-        exp1 = np.exp(x[i]-a)  # exp1：入力xの最大値から引く
+        exp1 = np.exp(x[i] - a)  # exp1：入力xの最大値から引く
         y[i] = exp1 / np.sum(exp1)
 
     return y
@@ -42,6 +44,7 @@ def softmax(x):
 # 入力 x:100のバッチサイズ、784の特徴量 (100x784の行列)
 # 出力 y2:100のバッチサイズ、10の各ラベルの予測の確率 y2_0 = (0.1, 0.01, 0, 0.7, 0.02,....)
 
+
 def predict(x):
     # ランダムに行列を生成
     # w = np.random.rand(784, 10)
@@ -52,8 +55,17 @@ def predict(x):
     # w.shape = (1つのサンプルの特徴量の数,クラス数)
 
     # 手計算用
-    w1 = [[0.1, 0.8, 0.4], [0.1, 0.8, 0.3], [0.3, 0.8, 0.1], [0.1, 0.8, 0.4], [
-        0.1, 0.8, 0.3], [0.3, 0.8, 0.1], [0.1, 0.8, 0.4], [0.1, 0.8, 0.3], [0.3, 0.8, 0.1]]
+    w1 = [
+        [0.1, 0.8, 0.4],
+        [0.1, 0.8, 0.3],
+        [0.3, 0.8, 0.1],
+        [0.1, 0.8, 0.4],
+        [0.1, 0.8, 0.3],
+        [0.3, 0.8, 0.1],
+        [0.1, 0.8, 0.4],
+        [0.1, 0.8, 0.3],
+        [0.3, 0.8, 0.1],
+    ]
     w = np.array(w1)
 
     # ipdbはいいぞ
@@ -66,8 +78,8 @@ def predict(x):
     # 非負になるはず
 
     y2 = softmax(y1)
-    assert all([round(sum(a)) == 1 for a in y2]), 'sum error'
-    assert all([a >= 0 for a in y2.reshape(-1)]), 'hihu error'
+    assert all([round(sum(a)) == 1 for a in y2]), "sum error"
+    assert all([a >= 0 for a in y2.reshape(-1)]), "hihu error"
     return y2
 
 
@@ -102,7 +114,7 @@ def cross_entropy_error(y, t):
     # print(np.round(x, 2))
 
     # 正解データtがone-hotの場合(*今回 t = 0,0,0,1,0....)
-    ret = - np.sum(t * np.log(y + delta)) / batch_size
+    ret = -np.sum(t * np.log(y + delta)) / batch_size
 
     # 正解データtが正解ラベル(ベクトル)の場合(t = 0~9までの数値)
     # ret = -np.sum(np.log(y[np.arange(batch_size), t] + delta)) / batch_size
@@ -121,10 +133,11 @@ def cross_entropy_error(y, t):
 # 出力：予測値yと正解tとの誤差を計算
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
 
+
 def loss_function(x, t):
     y = predict(x)  # x:100*784
     # y：100*10  (0.1, 0.5, 0.05, ・・・)
-    #assert y.shape == (100, 10), 'predict shape error'
+    # assert y.shape == (100, 10), 'predict shape error'
     # 手計算用
 
     return cross_entropy_error(y, t)  # スカラー
@@ -139,6 +152,7 @@ def loss_function(x, t):
 # 出力が満たすべき条件を列挙して、それを満たしているかを確認する
 # 出力 勾配 100✖️784行列
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
+
 
 def numerical_gradient(f, x, t):  # 引数：損失関数、初期値(x0やx1などの値)、正解データt
     h = 1e-4
@@ -155,7 +169,7 @@ def numerical_gradient(f, x, t):  # 引数：損失関数、初期値(x0やx1な
         # f(x-h)の計算
         x[idx] = tmp_val - h
         fxh2 = f(x, t)
-        grad[idx] = (fxh1 - fxh2)/(2*h)
+        grad[idx] = (fxh1 - fxh2) / (2 * h)
 
         # x[idx] = tmp_val #値を元に戻す(for文の最初に関係がある？)
     return grad
@@ -176,7 +190,7 @@ def numerical_gradient(f, x, t):  # 引数：損失関数、初期値(x0やx1な
 #   x_batch = x_train[a] #画像 100×784 (28*28=784)
 #   t_batch = t_train[a] #画像のラベル 100×10
 
-# # 5-2.勾配の計算　
+# # 5-2.勾配の計算
 #   # y = loss_function(x_batch, t_batch) #損失値
 #   grad = numerical_gradient(loss_function, x_batch)
 
