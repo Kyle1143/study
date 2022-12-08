@@ -44,19 +44,40 @@ def test_softmax():
 
 def test_predict():
     # 入力xを作る
-    # x = (100, 784)
-    # x = [[ i for i in range(100)] for _ in range(784)]
     # ランダムに行列を生成
     x = np.random.rand(100, 784)
-
     # assert 条件式　を使うと確認が楽
     assert x.shape == (100, 784), print("Shape Size Error")
-
+    # 入力wを作る
+    w = np.random.rand(x.shape[1], 10)
+    assert w.shape == (784, 10), print("w Shape Size Error")
     # print("x.shape: {}, x: {}".format(x.shape, x))
-    y = predict(x)
+    y = predict(x, w)
     assert y.shape == (100, 10), print("Shape Error")
     # print("y.shape: {}, y: {}".format(y.shape, y))
     # print("predict:", y)
+
+    # 入力：ミニバッチ数が9, 特徴量次元が256を想定
+    x = np.random.rand(9, 256)
+    # 入力wを作る
+    w = np.random.rand(x.shape[1], 10)
+    assert w.shape == (256, 10), print("w Shape Size Error")
+    # 出力：ミニバッチの数 x クラス数10を想定
+    y = predict(x, w)
+    assert x.shape == (9, 256)
+    assert y.shape == (9, 10)
+    assert len(x) == len(y)
+
+    # 入力：ミニバッチ数が32, 特徴量次元が512を想定
+    x = np.random.rand(32, 512)
+    # 入力wを作る
+    w = np.random.rand(x.shape[1], 3)
+    assert w.shape == (512, 3), print("w Shape Size Error")
+    # 出力：ミニバッチの数 x クラス数3を想定
+    y = predict(x, w)
+    assert x.shape == (32, 512)
+    assert y.shape == (32, 3)
+    assert len(x) == len(y)
 
 
 def test_cross_entropy_error():
@@ -143,63 +164,63 @@ def test_loss_function():
     # one-hotの確認assert
     assert all([sum(b) == 1 for b in t]), print("one-hot error05")
 
-    # ここだけ手計算用
-    # x1 (3✖️9行列)
-    x1 = [
-        [0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1],
-        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
-        [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1],
-    ]
-    t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
-    x = np.array(x1)
-    assert x.shape == (3, 9), "x shape error"
-    t = np.array(t1)
-    assert t.shape == (3, 3), "t shape error"
+    # # ここだけ手計算用
+    # # x1 (3✖️9行列)
+    # x1 = [
+    #     [0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1],
+    #     [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
+    #     [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1],
+    # ]
+    # t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
+    # x = np.array(x1)
+    # assert x.shape == (3, 9), "x shape error"
+    # t = np.array(t1)
+    # assert t.shape == (3, 3), "t shape error"
 
     L = loss_function(x, t)
     assert isinstance(L, float), "Shape Error"
 
 
 def test_numerical_gradient():
-    # # 入力xを作る
-    # # ランダムに行列を生成
-    # x = np.random.rand(100, 784)
-    # assert x.shape == (100,784), print('x Shape Size Error')
+    # 入力xを作る
+    # ランダムに行列を生成
+    x = np.random.rand(100, 784)
+    assert x.shape == (100, 784), print("x Shape Size Error")
 
-    # # 入力tを作る
-    # a = np.random.randint(10,size=(100))
-    # # print("a.shape: {}, a: {}".format(a.shape, a))
-    # assert a.shape == (100, ), print("shape error02")
-    # a_one_hot = np.identity(10)[a]
-    # assert a_one_hot.shape == (100, 10), print("shape error03")
-    # t = a_one_hot
-    # # print("t.shape: {}, t: {}".format(t.shape, t))
-    # assert t.shape == (100, 10), print("shape error04")
-    # # one-hotの確認assert
-    # assert all([sum(b)==1 for b in t]), print('one-hot error05')
-
-    # # numerical_gradient(関数(loss), 微分したい変数(x))
-    # y = numerical_gradient(loss_function, x, t)
-    # assert y.shape == (100,784), print('y Shape Size Error')
-    # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
-
-    # ここだけ手計算用
-    # x1 (3✖️9行列)
-    x1 = [
-        [0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1],
-        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
-        [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1],
-    ]
-    t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
-    x = np.array(x1)
-    assert x.shape == (3, 9), "x shape error"
-    t = np.array(t1)
-    assert t.shape == (3, 3), "t shape error"
+    # 入力tを作る
+    a = np.random.randint(10, size=(100))
+    # print("a.shape: {}, a: {}".format(a.shape, a))
+    assert a.shape == (100,), print("shape error02")
+    a_one_hot = np.identity(10)[a]
+    assert a_one_hot.shape == (100, 10), print("shape error03")
+    t = a_one_hot
+    # print("t.shape: {}, t: {}".format(t.shape, t))
+    assert t.shape == (100, 10), print("shape error04")
+    # one-hotの確認assert
+    assert all([sum(b) == 1 for b in t]), print("one-hot error05")
 
     # numerical_gradient(関数(loss), 微分したい変数(x))
     y = numerical_gradient(loss_function, x, t)
-    assert y.shape == (3, 9), print("y Shape Size Error")
+    assert y.shape == (100, 784), print("y Shape Size Error")
     print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
+
+    # ここだけ手計算用
+    # x1 (3✖️9行列)
+    # x1 = [
+    #     [0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1],
+    #     [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
+    #     [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1],
+    # ]
+    # t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
+    # x = np.array(x1)
+    # assert x.shape == (3, 9), "x shape error"
+    # t = np.array(t1)
+    # assert t.shape == (3, 3), "t shape error"
+
+    # # numerical_gradient(関数(loss), 微分したい変数(x))
+    # y = numerical_gradient(loss_function, x, t)
+    # assert y.shape == (3, 9), print("y Shape Size Error")
+    # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
 
 if __name__ == "__main__":
