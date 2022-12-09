@@ -223,5 +223,35 @@ def test_numerical_gradient():
     # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
 
+def test_numerical_gradient_mei():
+    x = np.array([0.6, 0.9])
+    t = np.array([0, 0, 1])
+
+    # case1
+    w = np.array(
+        [[-0.14161869, 0.90499692, 0.49966265], [1.73311584, -1.08183988, 1.56606182]]
+    )
+    true_grad = np.array(
+        [[0.24866079, 0.0369882, -0.28564899], [0.37299119, 0.0554823, -0.42847348]]
+    )
+    # TODO: 実装した勾配の式を入れる
+    y = None
+    # y = numerical_gradient()
+    assert ((true_grad - y) < 1e-3).all()
+    assert w.shape == y.shape
+
+    # case2
+    w = np.array(
+        [[-1.11403581, -0.14819338, 2.90998236], [0.37014269, -1.41260429, -0.05247394]]
+    )
+    true_grad = np.array(
+        [[0.06663823, 0.02391035, -0.09054858], [0.09995734, 0.03586553, -0.13582287]]
+    )
+    y = None
+    # y = numerical_gradient()
+    assert ((true_grad - y) < 1e-3).all()
+    assert w.shape == y.shape
+
+
 if __name__ == "__main__":
     pass
