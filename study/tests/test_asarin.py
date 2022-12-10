@@ -225,7 +225,8 @@ def test_numerical_gradient():
 
 def test_numerical_gradient_mei():
     x = np.array([0.6, 0.9])
-    t = np.array([0, 0, 1])
+    # t = np.array([0, 0, 1])
+    t = np.array([[1, 0, 0], [1, 0, 0], [0, 1, 0]])
 
     # case1
     w = np.array(
