@@ -205,6 +205,7 @@ def test_numerical_gradient():
     # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
     # 手計算用
+    # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
     x1 = [[0.5, 0.8], [0.7, 0.9]]
     t1 = [[1, 0, 0], [1, 0, 0]]
     x = np.array(x1)
@@ -216,10 +217,19 @@ def test_numerical_gradient():
     w = np.array(w1)
     assert w.shape == (2, 3), "w shape error"
 
+    true_grad = None
+    # true_grad = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
+    # true_grad = np.array(true_grad)
+    # assert true_grad.shape == (2, 3), "true_grad shape error"
+
     # numerical_gradient
     y = numerical_gradient(loss_function, x, t, w)
-    assert y.shape == (3, 3), print("y Shape Size Error")
+    assert y.shape == (2, 3), print("y Shape Size Error")
     print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
+
+    # 手計算結果とcodeの出力結果を確認
+    assert ((true_grad - y) < 1e-4).all()
+    assert w.shape == y.shape
 
 
 if __name__ == "__main__":
