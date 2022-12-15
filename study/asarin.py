@@ -47,16 +47,16 @@ def softmax(x):
 
 
 def predict(x, w):
-    y1 = np.dot(x, w)
+    seki = np.dot(x, w)
     # softmax完成!
     # y2.shape (3,3)
     # 各行の和が1になる
     # 非負になるはず
 
-    y2 = softmax(y1)
-    assert all([round(sum(a)) == 1 for a in y2]), "sum error"
-    assert all([a >= 0 for a in y2.reshape(-1)]), "hihu error"
-    return y2
+    y = softmax(seki)
+    assert all([round(sum(a)) == 1 for a in y]), "sum error"
+    assert all([a >= 0 for a in y.reshape(-1)]), "hihu error"
+    return y
 
 
 # 2-2 cross-entropy-error(yがニューラルネットの出力、tが教師データ)
@@ -110,7 +110,7 @@ def cross_entropy_error(y, t):
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
 
 
-def loss_function(x, t):
+def loss_function(x, t, w):
     y = predict(x)  # x:100*784
     # y：100*10  (0.1, 0.5, 0.05, ・・・)
     # assert y.shape == (100, 10), 'predict shape error'
@@ -119,7 +119,7 @@ def loss_function(x, t):
     return cross_entropy_error(y, t)  # スカラー
 
 
-# 2-4 数値微分(fが微分したい関数、xがそれで微分したい変数, tが正解データ)
+# 2-4 数値微分(fが微分したい関数、xが初期値, tが正解データ、wが更新したい重み)
 # 入力が満たすべき条件を列挙して、それを満たしているかを確認する
 # 入力 f:微分したい関数(後々損失関数を微分したい)
 # 入力 x:それについて微分する(x0,x1,..など)
@@ -130,21 +130,21 @@ def loss_function(x, t):
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
 
 
-def numerical_gradient(f, x, t):  # 引数：損失関数、初期値(x0やx1などの値)、正解データt
+def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1などの値)、正解データ、重み
     h = 1e-4
     grad = np.zeros_like(x)  # xと同じ形状の配列を生成(要素が全て0)
 
     for idx in range(x.shape[0]):
         tmp_val = x[idx]
         # f(x+h)の計算
-        x[idx] = tmp_val + h
-        fxh1 = f(x, t)
+        w[idx] = tmp_val + h
+        fxh1 = f(x, t, w)
 
         # set_trace()
 
         # f(x-h)の計算
-        x[idx] = tmp_val - h
-        fxh2 = f(x, t)
+        w[idx] = tmp_val - h
+        fxh2 = f(x, t, w)
         grad[idx] = (fxh1 - fxh2) / (2 * h)
 
         # x[idx] = tmp_val #値を元に戻す(for文の最初に関係がある？)
