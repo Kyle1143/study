@@ -217,6 +217,7 @@ def test_numerical_gradient():
     w = np.array(w1)
     assert w.shape == (2, 3), "w shape error"
 
+    # 手計算結果をここで記載
     true_grad = None
     # true_grad = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
     # true_grad = np.array(true_grad)
