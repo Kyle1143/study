@@ -207,7 +207,7 @@ def test_numerical_gradient():
     # 手計算用
     # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
     x1 = [[0.5, 0.8], [0.7, 0.9]]
-    t1 = [[1, 0, 0], [1, 0, 0]]
+    t1 = [[1, 0, 0], [0, 1, 0]]
     x = np.array(x1)
     assert x.shape == (2, 2), "x shape error"
     t = np.array(t1)
@@ -230,6 +230,26 @@ def test_numerical_gradient():
     # 手計算結果とcodeの出力結果を確認
     assert ((true_grad - y) < 1e-4).all()
     assert w.shape == y.shape
+
+    # 行列積 np.dot(x,w)
+    # 2.2	2.11	2.1
+    # 2.64	2.58	2.5
+
+    # softmax
+    # 0.35476484264325
+    # 0.3242306531295
+    # 0.32100450422725
+
+    # 0.3557297500606
+    # 0.33501366214786
+    # 0.30925658779154
+
+    # exp
+    # -1.0363001240
+    # -1.0935839654577
+
+    # cross_entropy
+    # 1.06494204
 
 
 if __name__ == "__main__":
