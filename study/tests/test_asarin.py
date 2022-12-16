@@ -178,6 +178,7 @@ def test_loss_function():
     # assert t.shape == (3, 3), "t shape error"
 
     L = loss_function(x, t)
+    print("L.shape: {}, loss_function: {}".format(L.shape, L))
     assert isinstance(L, float), "Shape Error"
 
 
