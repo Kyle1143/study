@@ -216,7 +216,7 @@ def test_numerical_gradient():
 
     # numerical_gradient(関数(loss), 微分したい変数(x))
     y = numerical_gradient(loss_function, x, t, w)
-    assert y.shape == (100, 784), print("y Shape Size Error")
+    assert y.shape == (784, 10), print("y Shape Size Error")
     print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
     # 手計算用
@@ -233,10 +233,10 @@ def test_numerical_gradient():
     assert w.shape == (2, 3), "w shape error"
 
     # 手計算結果をここで記載
-    true_grad = None
-    # true_grad = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
-    # true_grad = np.array(true_grad)
-    # assert true_grad.shape == (2, 3), "true_grad shape error"
+    # true_grad = None
+    true_grad = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
+    true_grad = np.array(true_grad)
+    assert true_grad.shape == (2, 3), "true_grad shape error"
 
     # numerical_gradient
     y = numerical_gradient(loss_function, x, t, w)
