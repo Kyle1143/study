@@ -108,8 +108,8 @@ def cross_entropy_error(y, t):
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
 
 
-def loss_function(x, t):
-    y = predict(x)  # x:100*784
+def loss_function(x, t, w):
+    y = predict(x, w)  # x:100*784
     # y：100*10  (0.1, 0.5, 0.05, ・・・)
     # assert y.shape == (100, 10), 'predict shape error'
     # 手計算用
@@ -130,15 +130,13 @@ def loss_function(x, t):
 
 def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1などの値)、正解データ、重み
     h = 1e-4
-    grad = np.zeros_like(x)  # xと同じ形状の配列を生成(要素が全て0)
+    grad = np.zeros_like(w)  # xと同じ形状の配列を生成(要素が全て0)
 
-    for idx in range(x.shape[0]):
-        tmp_val = x[idx]
+    for idx in range(len(grad)):
+        tmp_val = w[idx]
         # f(x+h)の計算
         w[idx] = tmp_val + h
         fxh1 = f(x, t, w)
-
-        # set_trace()
 
         # f(x-h)の計算
         w[idx] = tmp_val - h
