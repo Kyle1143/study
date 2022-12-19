@@ -112,7 +112,6 @@ def loss_function(x, t, w):
     y = predict(x, w)  # x:100*784
     # y：100*10  (0.1, 0.5, 0.05, ・・・)
     # assert y.shape == (100, 10), 'predict shape error'
-    # 手計算用
 
     return cross_entropy_error(y, t)  # スカラー
 
