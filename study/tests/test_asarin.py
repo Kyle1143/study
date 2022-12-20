@@ -142,9 +142,6 @@ def test_cross_entropy_error():
     assert c.shape == (), "Shape Error"
     print("c.shape: {}, cross-entropy: {}".format(c.shape, c))
 
-    # #一旦ここまでテスト
-    # return
-
 
 def test_loss_function():
     # 入力xを作る
@@ -180,12 +177,6 @@ def test_loss_function():
     w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
     w = np.array(w1)
     assert w.shape == (2, 3), "w shape error"
-
-    # 手計算結果をここで記載
-    true_grad = None
-    # true_grad = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
-    # true_grad = np.array(true_grad)
-    # assert true_grad.shape == (2, 3), "true_grad shape error"
 
     L = loss_function(x, t, w)
     print("L.shape: {}, loss_function: {}".format(L.shape, L))
