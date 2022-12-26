@@ -144,15 +144,22 @@ def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1
             # f(x+h)の計算
             w[i][j] = tmp_val + h
             fxh1 = f(x, t, w)
-            print("fxh1:", fxh1)
+            # print("fxh1:", fxh1)
 
             # f(x-h)の計算
             w[i][j] = tmp_val - h
             fxh2 = f(x, t, w)
-            print("fxh2:", fxh2)
-            grad_y = fxh1 - fxh2
-            print("fxh1 - fxh2:", grad_y)
-            grad[i] = (fxh1 - fxh2) / (2 * h)
+            # print("fxh2:", fxh2)
+
+            # f(w+h)-f(w-h)の計算と重み更新
+            grad_fxh = fxh1 - fxh2
+            # print("fxh1 - fxh2:", grad_fxh)
+            grad[i][j] = grad_fxh / (2 * h)
+            print(
+                "grad[{}].[{}].shape: {}, grad: {}".format(
+                    i, j, grad[i][j].shape, grad[i][j]
+                )
+            )
 
     return grad
 
