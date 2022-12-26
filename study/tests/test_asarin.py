@@ -184,9 +184,9 @@ def test_loss_function():
 
 
 def test_numerical_gradient():
-    # x = np.array([0.6, 0.9])
-    # t = np.array([0, 0, 1])
-    # # t = np.array([[1, 0, 0], [1, 0, 0], [0, 1, 0]])
+    x = np.array([0.6, 0.9])
+    t = np.array([0, 0, 1])
+    # t = np.array([[1, 0, 0], [1, 0, 0], [0, 1, 0]])
 
     # # case1
     # w = np.array(
@@ -201,18 +201,17 @@ def test_numerical_gradient():
     # assert (abs(true_grad - y) < 1e-3).all()
     # assert w.shape == y.shape
 
-    # # case2
-    # w = np.array(
-    #     [[-1.11403581, -0.14819338, 2.90998236], [0.37014269, -1.41260429, -0.05247394]]
-    # )
-    # true_grad = np.array(
-    #     [[0.06663823, 0.02391035, -0.09054858], [0.09995734, 0.03586553, -0.13582287]]
-    # )
-    # y = numerical_gradient(loss_function, x, t, w)
-    # print("y", y)
-    # # y = numerical_gradient()
-    # assert (abs(true_grad - y) < 1e-3).all()
-    # assert w.shape == y.shape
+    # case2
+    w = np.array(
+        [[-1.11403581, -0.14819338, 2.90998236], [0.37014269, -1.41260429, -0.05247394]]
+    )
+    true_grad = np.array(
+        [[0.06663823, 0.02391035, -0.09054858], [0.09995734, 0.03586553, -0.13582287]]
+    )
+    y = numerical_gradient(loss_function, x, t, w)
+    print("numerical_gradient:", y)
+    assert (abs(true_grad - y) < 1e-3).all()
+    assert w.shape == y.shape
 
     # # 入力xを作る
     # # ランダムに行列を生成
@@ -240,42 +239,42 @@ def test_numerical_gradient():
     # assert y.shape == (784, 10), print("y Shape Size Error")
     # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
-    # 手計算用
-    # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
-    x1 = [[0.5, 0.8], [0.7, 0.9]]
-    t1 = [[1, 0, 0], [0, 1, 0]]
-    x = np.array(x1)
-    assert x.shape == (2, 2), "x shape error"
-    t = np.array(t1)
-    assert t.shape == (2, 3), "t shape error"
+    # # 手計算用
+    # # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
+    # x1 = [[0.5, 0.8], [0.7, 0.9]]
+    # t1 = [[1, 0, 0], [0, 1, 0]]
+    # x = np.array(x1)
+    # assert x.shape == (2, 2), "x shape error"
+    # t = np.array(t1)
+    # assert t.shape == (2, 3), "t shape error"
 
-    w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
-    w = np.array(w1)
-    assert w.shape == (2, 3), "w shape error"
+    # w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
+    # w = np.array(w1)
+    # assert w.shape == (2, 3), "w shape error"
 
-    # 手計算結果をここで記載
-    # 手計算の結果がおかしい
-    # fxh1-fxh2の差を2で割る(ここのミス)
-    true_grad = [
-        [-0.0368, -0.1516, 0.1884],
-        [-0.0980, -0.1695, 0.2675],
-    ]
-    true_grad = np.array(true_grad)
-    assert true_grad.shape == (2, 3), "true_grad shape error"
+    # # 手計算結果をここで記載
+    # # 手計算の結果がおかしい
+    # # fxh1-fxh2の差を2で割る(ここのミス)
+    # true_grad = [
+    #     [-0.0368, -0.1516, 0.1884],
+    #     [-0.0980, -0.1695, 0.2675],
+    # ]
+    # true_grad = np.array(true_grad)
+    # assert true_grad.shape == (2, 3), "true_grad shape error"
 
-    # numerical_gradient
-    y = numerical_gradient(loss_function, x, t, w)
-    assert y.shape == (2, 3), print("y Shape Size Error")
-    print("numerical_gradient.shape: {}, numerical_gradient: {}".format(y.shape, y))
+    # # numerical_gradient
+    # y = numerical_gradient(loss_function, x, t, w)
+    # assert y.shape == (2, 3), print("y Shape Size Error")
+    # print("numerical_gradient.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
-    # 手計算結果とcodeの出力結果を確認(< 1e-4)
-    assert (abs(true_grad - y) < 1e-4).all(), print("true_grad - y error")
-    print(
-        "true_grad - numerical_gradient: {}, true_grad - numerical_gradient: {}".format(
-            (true_grad - y).shape, true_grad - y
-        )
-    )
-    assert w.shape == y.shape, print("w.shape == y.shape error")
+    # # 手計算結果とcodeの出力結果を確認(< 1e-4)
+    # assert (abs(true_grad - y) < 1e-4).all(), print("true_grad - y error")
+    # print(
+    #     "true_grad - numerical_gradient: {}, true_grad - numerical_gradient: {}".format(
+    #         (true_grad - y).shape, true_grad - y
+    #     )
+    # )
+    # assert w.shape == y.shape, print("w.shape == y.shape error")
 
     # 行列積 np.dot(x,w)
     # ①2.2	②2.11	③2.1

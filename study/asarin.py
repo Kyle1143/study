@@ -30,10 +30,28 @@ import numpy as np
 
 def softmax(x):
     y = np.zeros_like(x)
+    print("x.shape", x.shape)
+
+    # ミニバッチ数1の時
+    a = np.max(x)  # a：入力xの最大値 OK
+    # print("a:", a)
+    new_x = x - a  # exp：入力xの最大値から引く
+    # print("new_x:", new_x)
+    exp = np.exp(new_x)
+    # print("exp:", exp)
+    sum_x = np.sum(exp)
+    # print("sum_x:", sum_x)
     for i in range(x.shape[0]):
-        a = np.max(x[i])  # a：入力xの最大値 OK
-        exp1 = np.exp(x[i] - a)  # exp1：入力xの最大値から引く
-        y[i] = exp1 / np.sum(exp1)
+        y[i] = exp[i] / sum_x
+        print("softmax[{}].shape: {}, softmax: {}".format(i, y[i].shape, y[i]))
+    # print("softmax:", y)
+
+    # ミニバッチ数2以上の時
+    # for i in range(x.shape[0]):
+    #     a = np.max(x[i])  # a：入力xの最大値 OK
+    #     exp = np.exp(x[i] - a)  # exp：入力xの最大値から引く
+    #     y[i] = exp / np.sum(exp)
+    #     # print("a:", a)
 
     return y
 
@@ -53,9 +71,16 @@ def predict(x, w):
     # 非負になるはず
 
     y = softmax(seki)
-    # assert all([round(a) == 1 for a in y]), "sum error"
-    assert all([round(sum(a)) == 1 for a in y]), "sum error"
-    assert all([a >= 0 for a in y.reshape(-1)]), "hihu error"
+
+    # ミニバッチ数1の時
+    new_y = y.reshape(-1, 1)
+    print("new_y:", new_y)
+    assert round(np.sum(new_y)) == 1, "sum error"
+
+    # # ミニバッチ数2以上の時
+    # assert all([round(sum(a)) == 1 for a in y]), "sum error"
+    # assert all([a >= 0 for a in y.reshape(-1)]), "hihu error"
+
     return y
 
 
