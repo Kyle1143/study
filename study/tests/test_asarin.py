@@ -374,8 +374,8 @@ def test_numerical_gradient():
 
 def test_numerical_gradient_mei():
     x = np.array([0.6, 0.9])
-    # t = np.array([0, 0, 1])
-    t = np.array([[1, 0, 0], [1, 0, 0], [0, 1, 0]])
+    t = np.array([0, 0, 1])
+    # t = np.array([[1, 0, 0], [1, 0, 0], [0, 1, 0]])
 
     # case1
     w = np.array(
@@ -385,9 +385,8 @@ def test_numerical_gradient_mei():
         [[0.24866079, 0.0369882, -0.28564899], [0.37299119, 0.0554823, -0.42847348]]
     )
     # TODO: 実装した勾配の式を入れる
-    y = None
-    # y = numerical_gradient()
-    assert ((true_grad - y) < 1e-3).all()
+    y = numerical_gradient(loss_function, x, t, w)
+    assert (abs(true_grad - y) < 1e-4).all()
     assert w.shape == y.shape
 
     # case2
@@ -397,9 +396,8 @@ def test_numerical_gradient_mei():
     true_grad = np.array(
         [[0.06663823, 0.02391035, -0.09054858], [0.09995734, 0.03586553, -0.13582287]]
     )
-    y = None
-    # y = numerical_gradient()
-    assert ((true_grad - y) < 1e-3).all()
+    y = numerical_gradient(loss_function, x, t, w)
+    assert (abs(true_grad - y) < 1e-4).all()
     assert w.shape == y.shape
 
 
