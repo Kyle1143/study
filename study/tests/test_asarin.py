@@ -197,8 +197,7 @@ def test_numerical_gradient():
     # )
     # # TODO: 実装した勾配の式を入れる
     # y = numerical_gradient(loss_function, x, t, w)
-    # print("y", y)
-    # # y = numerical_gradient()
+    # print("numerical_gradient:", y)
     # assert (abs(true_grad - y) < 1e-3).all()
     # assert w.shape == y.shape
 
