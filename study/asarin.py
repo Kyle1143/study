@@ -10,7 +10,6 @@ import numpy as np
 
 # from mnist import load_mnist # load_mnistファイルを実行
 
-#
 # 1.パラメータの初期値(2層)
 # w = (784, 10)
 # b = (b1, b2)
@@ -30,28 +29,30 @@ import numpy as np
 
 def softmax(x):
     y = np.zeros_like(x)
-    print("x.shape", x.shape)
+    # print("x.shape:", x.shape)
+    # print("y.ndim:", y.ndim)
 
     # ミニバッチ数1の時
-    a = np.max(x)  # a：入力xの最大値 OK
-    # print("a:", a)
-    new_x = x - a  # exp：入力xの最大値から引く
-    # print("new_x:", new_x)
-    exp = np.exp(new_x)
-    # print("exp:", exp)
-    sum_x = np.sum(exp)
-    # print("sum_x:", sum_x)
-    for i in range(x.shape[0]):
-        y[i] = exp[i] / sum_x
-        print("softmax[{}].shape: {}, softmax: {}".format(i, y[i].shape, y[i]))
-    # print("softmax:", y)
-
+    if y.ndim == 1:
+        a = np.max(x)  # a：入力xの最大値 OK
+        # print("a:", a)
+        new_x = x - a  # exp：入力xの最大値から引く
+        # print("new_x:", new_x)
+        exp = np.exp(new_x)
+        # print("exp:", exp)
+        sum_x = np.sum(exp)
+        # print("sum_x:", sum_x)
+        for i in range(x.shape[0]):
+            y[i] = exp[i] / sum_x
+            # print("softmax[{}].shape: {}, softmax: {}".format(i, y[i].shape, y[i]))
+        # print("softmax:", y)
     # ミニバッチ数2以上の時
-    # for i in range(x.shape[0]):
-    #     a = np.max(x[i])  # a：入力xの最大値 OK
-    #     exp = np.exp(x[i] - a)  # exp：入力xの最大値から引く
-    #     y[i] = exp / np.sum(exp)
-    #     # print("a:", a)
+    else:
+        for i in range(x.shape[0]):
+            a = np.max(x[i])  # a：入力xの最大値 OK
+            exp = np.exp(x[i] - a)  # exp：入力xの最大値から引く
+            y[i] = exp / np.sum(exp)
+            # print("a:", a)
 
     return y
 
@@ -66,20 +67,22 @@ def softmax(x):
 
 def predict(x, w):
     seki = np.dot(x, w)
-    print("seki:", seki)
+    # print("seki:", seki)
     # 各行の和が1になる
     # 非負になるはず
 
     y = softmax(seki)
 
     # ミニバッチ数1の時
-    new_y = y.reshape(-1, 1)
-    print("new_y:", new_y)
-    assert round(np.sum(new_y)) == 1, "sum error"
+    if y.ndim == 1:
+        new_y = y.reshape(-1, 1)
+        # print("new_y:", new_y)
+        assert round(np.sum(new_y)) == 1, "sum error"
 
-    # # ミニバッチ数2以上の時
-    # assert all([round(sum(a)) == 1 for a in y]), "sum error"
-    # assert all([a >= 0 for a in y.reshape(-1)]), "hihu error"
+    # ミニバッチ数2以上の時
+    else:
+        assert all([round(sum(a)) == 1 for a in y]), "sum error"
+        assert all([a >= 0 for a in y.reshape(-1)]), "hihu error"
 
     return y
 
@@ -104,10 +107,7 @@ def cross_entropy_error(y, t):
         t = t.reshape(1, t.size)
         y = y.reshape(1, y.size)
     batch_size = y.shape[0]
-    # batch_size = 3 #確認用
     delta = 1e-7  # logの中をゼロにしたくないので微小な値を入れておく
-    # batch_size=5の時、np.arange(batch_size)は[0,1,2,3,4]
-    # print(np.arange(batch_size))
 
     # xの範囲は1.0を超えることは容易に考えられる
     # log e^(-1)の時、-1を取るため
@@ -116,7 +116,7 @@ def cross_entropy_error(y, t):
 
     # 正解データtがone-hotの場合(*今回 t = 0,0,0,1,0....)
     ret = -np.sum(t * np.log(y + delta)) / batch_size
-    print("cross_entropy_loss:", ret)
+    # print("cross_entropy_loss:", ret)
 
     # 正解データtが正解ラベル(ベクトル)の場合(t = 0~9までの数値)
     # ret = -np.sum(np.log(y[np.arange(batch_size), t] + delta)) / batch_size
@@ -138,7 +138,7 @@ def cross_entropy_error(y, t):
 
 def loss_function(x, t, w):
     y = predict(x, w)  # x:100*784
-    print("predict:", y)
+    # print("predict:", y)
     # y：100*10  (0.1, 0.5, 0.05, ・・・)
     # assert y.shape == (100, 10), 'predict shape error'
 
@@ -159,7 +159,7 @@ def loss_function(x, t, w):
 def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1などの値)、正解データ、重み
     h = 1e-4
     grad = np.zeros_like(w)  # wと同じ形状の配列を生成(要素が全て0)
-    print("grad.shape():", grad.shape)
+    # print("grad.shape():", grad.shape)
     tate, yoko = grad.shape  # grad.shape = (tate, yoko)
 
     for i in range(tate):
@@ -180,11 +180,11 @@ def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1
             grad_fxh = fxh1 - fxh2
             # print("fxh1 - fxh2:", grad_fxh)
             grad[i][j] = grad_fxh / (2 * h)
-            print(
-                "grad[{}].[{}].shape: {}, grad: {}".format(
-                    i, j, grad[i][j].shape, grad[i][j]
-                )
-            )
+            # print(
+            #     "grad[{}].[{}].shape: {}, grad: {}".format(
+            #         i, j, grad[i][j].shape, grad[i][j]
+            #     )
+            # )
 
     return grad
 
