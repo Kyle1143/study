@@ -257,8 +257,8 @@ def test_numerical_gradient():
     # 手計算の結果がおかしい
     # fxh1-fxh2の差を2で割る(ここのミス)
     true_grad = [
-        [1.06494204, 1.0649384, 1.06497816],
-        [1.06494204, 1.06494204, 1.06494204],
+        [-0.0368, -0.1516, 0.1884],
+        [-0.0980, -0.1695, 0.2675],
     ]
     true_grad = np.array(true_grad)
     assert true_grad.shape == (2, 3), "true_grad shape error"
@@ -266,13 +266,16 @@ def test_numerical_gradient():
     # numerical_gradient
     y = numerical_gradient(loss_function, x, t, w)
     assert y.shape == (2, 3), print("y Shape Size Error")
-    print("numerical_gradient:", y)
-    print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
+    print("numerical_gradient.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
-    # # 手計算結果とcodeの出力結果を確認(< 1e-4)
-    # assert (abs(true_grad - y) < 1e-4).all(), print("true_grad - y error")
-    # print("true_grad - y: {}, true_grad - y: {}".format((true_grad - y).shape, true_grad - y))
-    # assert w.shape == y.shape, print("w.shape == y.shape error")
+    # 手計算結果とcodeの出力結果を確認(< 1e-4)
+    assert (abs(true_grad - y) < 1e-4).all(), print("true_grad - y error")
+    print(
+        "true_grad - numerical_gradient: {}, true_grad - numerical_gradient: {}".format(
+            (true_grad - y).shape, true_grad - y
+        )
+    )
+    assert w.shape == y.shape, print("w.shape == y.shape error")
 
     # 行列積 np.dot(x,w)
     # ①2.2	②2.11	③2.1
@@ -351,9 +354,6 @@ def test_numerical_gradient():
     # 2.12988409 1.064944
     # 2.12987672 1.06493836
 
-    # 1.06493807467479
-    # 1.0649454353484877
-
     # #②
     # 2.072588565 1.03629282
     # 2.18716792 1.09358396
@@ -361,14 +361,6 @@ def test_numerical_gradient():
     # #③
     # 2.12995633 1.064978
     # 2.0726906 1.0363453
-
-    # ???????
-    # 2.129884091 1.064943
-    # 2.129884091 1.0
-    # 2.129884091
-
-    # True Grad
-    # 0.18849884
 
 
 if __name__ == "__main__":
