@@ -142,9 +142,6 @@ def test_cross_entropy_error():
     assert c.shape == (), "Shape Error"
     print("c.shape: {}, cross-entropy: {}".format(c.shape, c))
 
-    # #一旦ここまでテスト
-    # return
-
 
 def test_loss_function():
     # 入力xを作る
@@ -164,25 +161,60 @@ def test_loss_function():
     # one-hotの確認assert
     assert all([sum(b) == 1 for b in t]), print("one-hot error05")
 
-    # # ここだけ手計算用
-    # # x1 (3✖️9行列)
-    # x1 = [
-    #     [0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1],
-    #     [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
-    #     [0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1],
-    # ]
-    # t1 = [[1, 0, 0], [1, 0, 0], [0, 1, 0]]
-    # x = np.array(x1)
-    # assert x.shape == (3, 9), "x shape error"
-    # t = np.array(t1)
-    # assert t.shape == (3, 3), "t shape error"
+    # 入力 w
+    w = np.random.rand(784, 10)
+    assert w.shape == (784, 10), print("w Shape Size Error")
 
-    L = loss_function(x, t)
+    # 手計算用
+    # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
+    x1 = [[0.5, 0.8], [0.7, 0.9]]
+    t1 = [[1, 0, 0], [0, 1, 0]]
+    x = np.array(x1)
+    assert x.shape == (2, 2), "x shape error"
+    t = np.array(t1)
+    assert t.shape == (2, 3), "t shape error"
+
+    w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
+    w = np.array(w1)
+    assert w.shape == (2, 3), "w shape error"
+
+    L = loss_function(x, t, w)
     print("L.shape: {}, loss_function: {}".format(L.shape, L))
     assert isinstance(L, float), "Shape Error"
 
 
 def test_numerical_gradient():
+    # x = np.array([0.6, 0.9])
+    # t = np.array([0, 0, 1])
+    # # t = np.array([[1, 0, 0], [1, 0, 0], [0, 1, 0]])
+
+    # # case1
+    # w = np.array(
+    #     [[-0.14161869, 0.90499692, 0.49966265], [1.73311584, -1.08183988, 1.56606182]]
+    # )
+    # true_grad = np.array(
+    #     [[0.24866079, 0.0369882, -0.28564899], [0.37299119, 0.0554823, -0.42847348]]
+    # )
+    # # TODO: 実装した勾配の式を入れる
+    # y = numerical_gradient(loss_function, x, t, w)
+    # print("y", y)
+    # # y = numerical_gradient()
+    # assert (abs(true_grad - y) < 1e-3).all()
+    # assert w.shape == y.shape
+
+    # # case2
+    # w = np.array(
+    #     [[-1.11403581, -0.14819338, 2.90998236], [0.37014269, -1.41260429, -0.05247394]]
+    # )
+    # true_grad = np.array(
+    #     [[0.06663823, 0.02391035, -0.09054858], [0.09995734, 0.03586553, -0.13582287]]
+    # )
+    # y = numerical_gradient(loss_function, x, t, w)
+    # print("y", y)
+    # # y = numerical_gradient()
+    # assert (abs(true_grad - y) < 1e-3).all()
+    # assert w.shape == y.shape
+
     # # 入力xを作る
     # # ランダムに行列を生成
     # x = np.random.rand(100, 784)
@@ -200,9 +232,13 @@ def test_numerical_gradient():
     # # one-hotの確認assert
     # assert all([sum(b) == 1 for b in t]), print("one-hot error05")
 
+    # # 入力 w
+    # w = np.random.rand(784, 10)
+    # assert w.shape == (784, 10), print("w Shape Size Error")
+
     # # numerical_gradient(関数(loss), 微分したい変数(x))
-    # y = numerical_gradient(loss_function, x, t)
-    # assert y.shape == (100, 784), print("y Shape Size Error")
+    # y = numerical_gradient(loss_function, x, t, w)
+    # assert y.shape == (784, 10), print("y Shape Size Error")
     # print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
     # 手計算用
@@ -219,39 +255,121 @@ def test_numerical_gradient():
     assert w.shape == (2, 3), "w shape error"
 
     # 手計算結果をここで記載
-    true_grad = None
-    # true_grad = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
-    # true_grad = np.array(true_grad)
-    # assert true_grad.shape == (2, 3), "true_grad shape error"
+    # 手計算の結果がおかしい
+    # fxh1-fxh2の差を2で割る(ここのミス)
+    true_grad = [
+        [1.06494204, 1.0649384, 1.06497816],
+        [1.06494204, 1.06494204, 1.06494204],
+    ]
+    true_grad = np.array(true_grad)
+    assert true_grad.shape == (2, 3), "true_grad shape error"
 
     # numerical_gradient
     y = numerical_gradient(loss_function, x, t, w)
     assert y.shape == (2, 3), print("y Shape Size Error")
+    print("numerical_gradient:", y)
     print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
 
-    # 手計算結果とcodeの出力結果を確認
-    assert ((true_grad - y) < 1e-4).all()
-    assert w.shape == y.shape
+    # # 手計算結果とcodeの出力結果を確認(< 1e-4)
+    # assert (abs(true_grad - y) < 1e-4).all(), print("true_grad - y error")
+    # print("true_grad - y: {}, true_grad - y: {}".format((true_grad - y).shape, true_grad - y))
+    # assert w.shape == y.shape, print("w.shape == y.shape error")
 
     # 行列積 np.dot(x,w)
-    # 2.2	2.11	2.1
-    # 2.64	2.58	2.5
+    # ①2.2	②2.11	③2.1
+    # ④2.64	⑤2.58	⑥2.5
 
     # softmax
-    # 0.35476484264325
-    # 0.3242306531295
-    # 0.32100450422725
+    # ①
+    # 0.35475339738891
+    # 0.33502200426645
 
-    # 0.3557297500606
-    # 0.33501366214786
-    # 0.30925658779154
+    # 0.35477628806381
+    # 0.33500531986078
+
+    # ②
+    # 0.35477059387453
+    # 0.35476426751456
+
+    # 0.33499806776239
+    # 0.33502925689354
+
+    # ③
+    # 0.35477053664791
+    # 0.35470789699171
+
+    # 0.33502091441377
+    # 0.33500640968829
+
+    # ④
+    # 0.3547465303161
+    # 0.35478315539594
+
+    # 0.33502438769796
+    # 0.33500293631923
+
+    # ⑤
+    # 0.35477404456478
+    # 0.35475564046292
+
+    # 0.33499361228984
+    # 0.33503371260132
+
+    # ⑥
+    # 0.35477395300178
+    # 0.3547557320238
+
+    # 0.33502298645417
+    # 0.33500433752141
 
     # exp
-    # -1.0363001240
-    # -1.0935839654577
+    # ①
+    # -1.036332386134 + -1.0935590649367
+    # -1.0362678626183 + -1.0936088671017
+
+    # #②
+    # -1.0362839128312 + -1.036301745246
+    # -1.0936305150472 + -1.0935374169599
+
+    # #③
+    # -1.0362840741372 + -1.0364606535888
+    # -1.0935623180199 + -1.0936056139422
+
+    # #④
+    # -1.0363517436351 + -1.0362485060099
+    # -1.0935519507084 +-1.0936159820635
+
+    # #⑤
+    # -1.0362741863389 + -1.0363260632434
+    # -1.0936438151304 + -1.0935241175896
+
+    # #⑥
+    # -1.0362744444271 + -1.0363258051478
+    # -1.09355613323 + -1.0936117994158
 
     # cross_entropy
-    # 1.06494204
+    # # ①
+    # 2.12988409 1.064944
+    # 2.12987672 1.06493836
+
+    # 1.06493807467479
+    # 1.0649454353484877
+
+    # #②
+    # 2.072588565 1.03629282
+    # 2.18716792 1.09358396
+
+    # #③
+    # 2.12995633 1.064978
+    # 2.0726906 1.0363453
+
+    # ???????
+    # 2.129884091 1.064943
+    # 2.129884091 1.0
+    # 2.129884091
+
+    # True Grad
+    # 0.18849884
 
 
 def test_numerical_gradient_mei():

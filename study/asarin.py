@@ -48,10 +48,12 @@ def softmax(x):
 
 def predict(x, w):
     seki = np.dot(x, w)
+    print("seki:", seki)
     # 各行の和が1になる
     # 非負になるはず
 
     y = softmax(seki)
+    # assert all([round(a) == 1 for a in y]), "sum error"
     assert all([round(sum(a)) == 1 for a in y]), "sum error"
     assert all([a >= 0 for a in y.reshape(-1)]), "hihu error"
     return y
@@ -89,6 +91,7 @@ def cross_entropy_error(y, t):
 
     # 正解データtがone-hotの場合(*今回 t = 0,0,0,1,0....)
     ret = -np.sum(t * np.log(y + delta)) / batch_size
+    print("cross_entropy_loss:", ret)
 
     # 正解データtが正解ラベル(ベクトル)の場合(t = 0~9までの数値)
     # ret = -np.sum(np.log(y[np.arange(batch_size), t] + delta)) / batch_size
@@ -108,11 +111,11 @@ def cross_entropy_error(y, t):
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
 
 
-def loss_function(x, t):
-    y = predict(x)  # x:100*784
+def loss_function(x, t, w):
+    y = predict(x, w)  # x:100*784
+    print("predict:", y)
     # y：100*10  (0.1, 0.5, 0.05, ・・・)
     # assert y.shape == (100, 10), 'predict shape error'
-    # 手計算用
 
     return cross_entropy_error(y, t)  # スカラー
 
@@ -124,28 +127,33 @@ def loss_function(x, t):
 # 入力 t:100のバッチサイズ、10個の正解ラベルの種類 (100x10の行列)　t0 = (0,0,0,1,0,0,0,...)
 # tはone-hot
 # 出力が満たすべき条件を列挙して、それを満たしているかを確認する
-# 出力 勾配 100✖️784行列
+# 出力 勾配 784✖️10行列
 # 正しい出力の例を用意して、対応する入力を入れた時にそれが出力されるかを確認する
 
 
 def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1などの値)、正解データ、重み
     h = 1e-4
-    grad = np.zeros_like(x)  # xと同じ形状の配列を生成(要素が全て0)
+    grad = np.zeros_like(w)  # wと同じ形状の配列を生成(要素が全て0)
+    print("grad.shape():", grad.shape)
+    tate, yoko = grad.shape  # grad.shape = (tate, yoko)
 
-    for idx in range(x.shape[0]):
-        tmp_val = x[idx]
-        # f(x+h)の計算
-        w[idx] = tmp_val + h
-        fxh1 = f(x, t, w)
+    for i in range(tate):
+        for j in range(yoko):
+            tmp_val = w[i][j]
 
-        # set_trace()
+            # f(x+h)の計算
+            w[i][j] = tmp_val + h
+            fxh1 = f(x, t, w)
+            print("fxh1:", fxh1)
 
-        # f(x-h)の計算
-        w[idx] = tmp_val - h
-        fxh2 = f(x, t, w)
-        grad[idx] = (fxh1 - fxh2) / (2 * h)
+            # f(x-h)の計算
+            w[i][j] = tmp_val - h
+            fxh2 = f(x, t, w)
+            print("fxh2:", fxh2)
+            grad_y = fxh1 - fxh2
+            print("fxh1 - fxh2:", grad_y)
+            grad[i] = (fxh1 - fxh2) / (2 * h)
 
-        # x[idx] = tmp_val #値を元に戻す(for文の最初に関係がある？)
     return grad
 
 
