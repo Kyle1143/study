@@ -7,7 +7,8 @@ from pdb import set_trace
 import matplotlib.pylab as plt
 import numpy as np
 
-# from mnist import load_mnist # load_mnistファイルを実行
+# zeroからdeepのload_mnist関数を参照
+from common import load_mnist
 
 # 1.パラメータの初期値(2層)
 # w = (784, 10)
@@ -16,8 +17,8 @@ import numpy as np
 # 2.必要な関数を定義
 # softmax関数#
 # TODO: ここ埋める
-# 入力 x: ベクトル,　どんな意味を持っている？
-# 出力　y: ベクトル,　y_0=...、y_1=...、
+# 入力 x: ベクトル, どんな意味を持っている？
+# 出力 y: ベクトル, y_0=...、y_1=...、
 # 変数名は適当につけない方
 # 正しいかどうか実際に実行してみてみよう
 # 全体を実行するのではなく，この関数だけ切り出してみる
@@ -186,8 +187,22 @@ def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1
     return grad
 
 
-# # 3.データをロード
-# (x_train, t_train), (x_test, t_test) = load_mnist(normalize = True, one_hot_label = True)
+# 3.MNISTデータセットの読み込み
+# load_mnist(normalize=True, flatten=True, one_hot_label=False):
+# normalize : 画像のピクセル値を0.0~1.0に正規化する
+# flatten : 画像を一次元配列に平にするかどうか
+# one_hot_label :
+#     one_hot_labelがTrueの場合、ラベルはone-hot配列として返す
+#     one-hot配列とは、たとえば[0,0,1,0,0,0,0,0,0,0]のような配列
+# 出力：(訓練画像, 訓練ラベル), (テスト画像, テストラベル)
+
+
+(x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
+print("x_train.shape: {}, x_train: {}".format(x_train.shape, x_train))
+print("t_train.shape: {}, t_train: {}".format(t_train.shape, t_train))
+print("x_test.shape: {}, x_test: {}".format(x_test.shape, x_test))
+print("t_test.shape: {}, t_test: {}".format(t_test.shape, t_test))
+
 
 # # 4.ハイパラを作成(iter、train_size、test_size、学習率)
 # iter = 100
