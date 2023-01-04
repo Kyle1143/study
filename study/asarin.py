@@ -195,13 +195,19 @@ def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1
 #     one_hot_labelがTrueの場合、ラベルはone-hot配列として返す
 #     one-hot配列とは、たとえば[0,0,1,0,0,0,0,0,0,0]のような配列
 # 出力：(訓練画像, 訓練ラベル), (テスト画像, テストラベル)
+# x_train.shape=(60000, 784), t_train.shape=(60000, 10)
+# x_test.shape=(10000, 784), t_test.shape=(10000, 10)
 
 
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
-print("x_train.shape: {}, x_train: {}".format(x_train.shape, x_train))
-print("t_train.shape: {}, t_train: {}".format(t_train.shape, t_train))
-print("x_test.shape: {}, x_test: {}".format(x_test.shape, x_test))
-print("t_test.shape: {}, t_test: {}".format(t_test.shape, t_test))
+# print("x_train.shape: {}, x_train: {}".format(x_train.shape, x_train))
+assert x_train.shape == (60000, 784), print("x_train Shape Size Error")
+# print("t_train.shape: {}, t_train: {}".format(t_train.shape, t_train))
+assert t_train.shape == (60000, 10), print("t_train Shape Size Error")
+# print("x_test.shape: {}, x_test: {}".format(x_test.shape, x_test))
+assert x_test.shape == (10000, 784), print("x_test Shape Size Error")
+# print("t_test.shape: {}, t_test: {}".format(t_test.shape, t_test))
+assert t_test.shape == (10000, 10), print("t_test Shape Size Error")
 
 
 # # 4.ハイパラを作成(iter、train_size、test_size、学習率)

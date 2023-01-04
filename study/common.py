@@ -1,5 +1,6 @@
 # zeroからDeepのコードを参照したものをcommonに掲載
 
+
 # coding: utf-8
 try:
     import urllib.request
