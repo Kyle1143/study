@@ -1,4 +1,3 @@
-# ここのpylanceのエラーは一旦無視
 import sys
 
 # デバッガーを使う
@@ -34,9 +33,9 @@ def softmax(x):
 
     # ミニバッチ数1の時
     if y.ndim == 1:
-        a = np.max(x)  # a：入力xの最大値 OK
-        # print("a:", a)
-        new_x = x - a  # exp：入力xの最大値から引く
+        max_x = np.max(x)  # max_x：入力xの最大値 OK
+        # print("max_x:", max_x)
+        new_x = x - max_x  # exp：入力xの最大値から引く
         # print("new_x:", new_x)
         exp = np.exp(new_x)
         # print("exp:", exp)
@@ -46,13 +45,14 @@ def softmax(x):
             y[i] = exp[i] / sum_x
             # print("softmax[{}].shape: {}, softmax: {}".format(i, y[i].shape, y[i]))
         # print("softmax:", y)
+
     # ミニバッチ数2以上の時
     else:
         for i in range(x.shape[0]):
-            a = np.max(x[i])  # a：入力xの最大値 OK
-            exp = np.exp(x[i] - a)  # exp：入力xの最大値から引く
+            max_x = np.max(x[i])  # max_x：入力xの最大値 OK
+            exp = np.exp(x[i] - max_x)  # exp：入力xの最大値から引く
             y[i] = exp / np.sum(exp)
-            # print("a:", a)
+            # print("max_x:", max_x)
 
     return y
 
@@ -111,9 +111,6 @@ def cross_entropy_error(y, t):
 
     # xの範囲は1.0を超えることは容易に考えられる
     # log e^(-1)の時、-1を取るため
-    # x = t * np.log(y + delta)
-    # print(np.round(x, 2))
-
     # 正解データtがone-hotの場合(*今回 t = 0,0,0,1,0....)
     ret = -np.sum(t * np.log(y + delta)) / batch_size
     # print("cross_entropy_loss:", ret)

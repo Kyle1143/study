@@ -1,3 +1,4 @@
+# asarin.pyで用いる関数をテスト
 # テストしたい関数を呼び出す
 import sys
 
@@ -14,6 +15,7 @@ from asarin import (
 
 
 def test_softmax():
+    # Case1
     # 入力xを作る
     # 10個の数値がベクトルになっている x=[1,10,100,...,]みたいな
     x = np.array([10 ** (i + 1) for i in range(10)])
@@ -23,6 +25,7 @@ def test_softmax():
     y = softmax(x)
     print("y.shape: {}, y: {}".format(y.shape, y))
 
+    # Case2
     # 入力xを作る
     # 10個の数値がベクトルになっている x=[10,20,30,...,]みたいな
     x = np.array([10 * (i + 1) for i in range(10)])
@@ -32,6 +35,7 @@ def test_softmax():
     y = softmax(x)
     print("y.shape: {}, y: {}".format(y.shape, y))
 
+    # Case3
     # 入力xを作る
     # 個の数値がベクトルになっている x=[1,2,3,4,..]みたいな
     x = np.array([1, 2, 1, -1, 3, 2])
@@ -43,6 +47,7 @@ def test_softmax():
 
 
 def test_predict():
+    # Case1
     # 入力xを作る
     # ランダムに行列を生成
     x = np.random.rand(100, 784)
@@ -55,8 +60,8 @@ def test_predict():
     y = predict(x, w)
     assert y.shape == (100, 10), print("Shape Error")
     # print("y.shape: {}, y: {}".format(y.shape, y))
-    # print("predict:", y)
 
+    # Case2
     # 入力：ミニバッチ数が9, 特徴量次元が256を想定
     x = np.random.rand(9, 256)
     # 入力wを作る
@@ -68,6 +73,7 @@ def test_predict():
     assert y.shape == (9, 10)
     assert len(x) == len(y)
 
+    # Case3
     # 入力：ミニバッチ数が32, 特徴量次元が512を想定
     x = np.random.rand(32, 512)
     # 入力wを作る
@@ -81,6 +87,7 @@ def test_predict():
 
 
 def test_cross_entropy_error():
+    # Case1
     # 予測値 0~1の範囲の実数 100✖️10の行列
     y = np.random.rand(100, 10)
     assert y.shape == (100, 10), print("shape error01")
@@ -94,22 +101,9 @@ def test_cross_entropy_error():
 
     # 正解ラベル 正解のラベルのインデックスに1、それ以外０(one-hot)　100✖️10行列
     # aは100の正解ラベル
-
-    # 書き方が間違い?
-    # a = np.random.randint(0, 9) for i in range(100)
-
     a = np.random.randint(10, size=(100))
-
-    # a_list = []
-    # for k in range(100):
-    #     x = np.random.randint(0,9)
-    #     a_list.append(x)
-    # aa = np.array(a_list)
-    # a = aa.astype(int)
-
     # print("a.shape: {}, a: {}".format(a.shape, a))
     assert a.shape == (100,), print("shape error02")
-    # a.ndim = 1
     # print(type(a))
     # <class 'numpy.ndarray'>
     a_one_hot = np.identity(10)[a]
@@ -123,13 +117,12 @@ def test_cross_entropy_error():
     # one-hotの確認assert
     assert all([sum(b) == 1 for b in t]), print("one-hot error05")
 
-    # # print(y.ndim)
-    # # ndim = 2
-
+    # 次元数が1の時とそれ以外で場合分け
     if pre.ndim == 1:
         t = t.reshape(1, t.size)
         pre = pre.reshape(1, pre.size)
 
+    # # Case2
     # # ここだけ手計算用
     # #-0.69314718055995 + -0.35667494393873 + -0.22314355131421
     # # 0.42431667
@@ -144,11 +137,11 @@ def test_cross_entropy_error():
 
 
 def test_loss_function():
+    # Case1：想定するshapeでの計算ができるかチェック
     # 入力xを作る
     # ランダムに行列を生成
     x = np.random.rand(100, 784)
     assert x.shape == (100, 784), print("Shape Size Error")
-
     # 入力tを作る
     a = np.random.randint(10, size=(100))
     # print("a.shape: {}, a: {}".format(a.shape, a))
@@ -160,11 +153,15 @@ def test_loss_function():
     assert t.shape == (100, 10), print("shape error04")
     # one-hotの確認assert
     assert all([sum(b) == 1 for b in t]), print("one-hot error05")
-
     # 入力 w
     w = np.random.rand(784, 10)
     assert w.shape == (784, 10), print("w Shape Size Error")
+    # loss関数に入力してチェック
+    L = loss_function(x, t, w)
+    print("L.shape: {}, loss_function: {}".format(L.shape, L))
+    assert isinstance(L, float), "Shape Error"
 
+    # Case2：ちゃんと計算結果が間違っていないかチェック
     # 手計算用
     # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
     x1 = [[0.5, 0.8], [0.7, 0.9]]
@@ -173,11 +170,10 @@ def test_loss_function():
     assert x.shape == (2, 2), "x shape error"
     t = np.array(t1)
     assert t.shape == (2, 3), "t shape error"
-
     w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
     w = np.array(w1)
     assert w.shape == (2, 3), "w shape error"
-
+    # loss関数に入力してチェック
     L = loss_function(x, t, w)
     print("L.shape: {}, loss_function: {}".format(L.shape, L))
     assert isinstance(L, float), "Shape Error"
@@ -222,7 +218,6 @@ def test_numerical_gradient():
     assert x.shape == (2, 2), "x shape error"
     t = np.array(t1)
     assert t.shape == (2, 3), "t shape error"
-
     w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
     w = np.array(w1)
     assert w.shape == (2, 3), "w shape error"
@@ -234,7 +229,6 @@ def test_numerical_gradient():
     ]
     true_grad = np.array(true_grad)
     assert true_grad.shape == (2, 3), "true_grad shape error"
-
     # numerical_gradient
     y = numerical_gradient(loss_function, x, t, w)
     assert y.shape == (2, 3), print("y Shape Size Error")
@@ -249,11 +243,11 @@ def test_numerical_gradient():
     # )
     assert w.shape == y.shape, print("w.shape == y.shape error")
 
-    # 本番のshape：入力xを作る
+    # Case4：本番のshape
+    # 入力xを作る
     # ランダムに行列を生成
     x = np.random.rand(100, 784)
     assert x.shape == (100, 784), print("x Shape Size Error")
-
     # 本番のshape：入力tを作る
     a = np.random.randint(10, size=(100))
     # print("a.shape: {}, a: {}".format(a.shape, a))
@@ -265,11 +259,9 @@ def test_numerical_gradient():
     assert t.shape == (100, 10), print("shape error04")
     # one-hotの確認assert
     assert all([sum(b) == 1 for b in t]), print("one-hot error05")
-
     # 入力 w
     w = np.random.rand(784, 10)
     assert w.shape == (784, 10), print("w Shape Size Error")
-
     # numerical_gradient(関数(loss), 微分したい変数(x))
     y = numerical_gradient(loss_function, x, t, w)
     assert y.shape == (784, 10), print("y Shape Size Error")
