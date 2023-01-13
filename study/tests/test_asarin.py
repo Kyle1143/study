@@ -6,6 +6,7 @@ sys.path.append(".")
 
 import numpy as np
 from asarin import (
+    accuracy,
     cross_entropy_error,
     loss_function,
     numerical_gradient,
@@ -266,6 +267,46 @@ def test_numerical_gradient():
     y = numerical_gradient(loss_function, x, t, w)
     assert y.shape == (784, 10), print("y Shape Size Error")
     print("y.shape: {}, numerical_gradient: {}".format(y.shape, y))
+
+
+def test_accuracy():
+    # Case1：想定するshapeでの計算ができるかチェック
+    # 入力xを作る
+    # ランダムに行列を生成
+    # x = np.random.rand(100, 784)
+    # assert x.shape == (100, 784), print("Shape Size Error")
+    # # 入力tを作る
+    # a = np.random.randint(10, size=(100))
+    # # print("a.shape: {}, a: {}".format(a.shape, a))
+    # assert a.shape == (100,), print("shape error02")
+    # a_one_hot = np.identity(10)[a]
+    # assert a_one_hot.shape == (100, 10), print("shape error03")
+    # t = a_one_hot
+    # # print("t.shape: {}, t: {}".format(t.shape, t))
+    # assert t.shape == (100, 10), print("shape error04")
+    # # one-hotの確認assert
+    # assert all([sum(b) == 1 for b in t]), print("one-hot error05")
+    # # 入力 w
+    # w = np.random.rand(784, 10)
+    # assert w.shape == (784, 10), print("w Shape Size Error")
+    # # axxuracy関数に入力してチェック
+    # A = accuracy(x, t, w)
+    # print("A.shape: {}, accuracy: {}".format(A.shape, A))
+
+    # case2
+    # x.shape=(2,2),t.shape=(2,3),w.shape=(2,3),true_grad.shape=(2,3)
+    x1 = [[0.5, 0.8], [0.7, 0.9]]
+    t1 = [[1, 0, 0], [0, 1, 0]]
+    x = np.array(x1)
+    assert x.shape == (2, 2), "x shape error"
+    t = np.array(t1)
+    assert t.shape == (2, 3), "t shape error"
+    w1 = [[1.2, 1.5, 1.0], [2.0, 1.7, 2.0]]
+    w = np.array(w1)
+    assert w.shape == (2, 3), "w shape error"
+    # axxuracy関数に入力してチェック
+    A = accuracy(x, t, w)
+    print("A.shape: {}, accuracy: {}".format(A.shape, A))
 
 
 if __name__ == "__main__":

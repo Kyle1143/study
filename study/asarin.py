@@ -187,6 +187,20 @@ def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1
     return grad
 
 
+# 2-5 accuracy(認識精度)
+# 入力 x:入力データ t:正解データ w:重み
+# 出力 スカラー(0~1の確率で表示)
+
+
+def accuracy(x, t, w):
+    y = predict(x, w)
+    accuracy_y = np.argmax(y, axis=1)
+    accuracy_t = np.argmax(t, axis=1)
+
+    accuracy = np.sum(accuracy_y == accuracy_t) / float(x.shape[0])
+    return accuracy
+
+
 # 3.MNISTデータセットの読み込み
 # load_mnist(normalize=True, flatten=True, one_hot_label=False):
 # normalize : 画像のピクセル値を0.0~1.0に正規化する
@@ -210,21 +224,42 @@ assert x_test.shape == (10000, 784), print("x_test Shape Size Error")
 assert t_test.shape == (10000, 10), print("t_test Shape Size Error")
 
 
-# # 4.ハイパラを作成(iter、train_size、test_size、学習率)
-# iter = 100
-# train_size = x_train.shape[0]
-# lr = 0.01
-# batch_size = 100
+# 4.ハイパラを作成(iter、train_size、学習率など)
+# iter：イテレーション
+# train_size：trainサイズ
+# lr：learning late(学習率)
+# batch_size：ミニバッチ数
 
-# # 5-1.ミニバッチを作成
-# for i in range(iter):
-#   a = np.random.choice(train_size, batch_size)
-#   x_batch = x_train[a] #画像 100×784 (28*28=784)
-#   t_batch = t_train[a] #画像のラベル 100×10
+iter = 100
+train_size = x_train.shape[0]
+lr = 0.01
+batch_size = 100
 
-# # 5-2.勾配の計算
-#   # y = loss_function(x_batch, t_batch) #損失値
-#   grad = numerical_gradient(loss_function, x_batch)
+# 重みwをどこかで宣言しないといけない...ここであってるのか？
+# 入力 w：784✖️10
+w = np.random.rand(x_train.shape[1], t_train.shape[1])
+print("w.shape: {}, w: {}".format(w.shape, w))
+assert w.shape == (784, 10), print("w Shape Size Error")
 
-# # 5-3.パラメータを更新
-#   w -= grad * lr
+
+# 5-1.ミニバッチを作成
+# ミニバッチを取得
+# batch：trainサイズ(60000)からbatchサイズ分ランダムに抽出する
+# x_batch：画像の特徴量(batch_size✖784)
+# t_batch：画像のラベル(batch_size✖️10)
+for i in range(iter):
+    print("Iteraion: ", (i + 1) * iter)
+    batch = np.random.choice(train_size, batch_size)
+    x_batch = x_train[batch]  # 画像 100×784 (28*28=784)
+    t_batch = t_train[batch]  # 画像のラベル 100×10
+
+    # 5-2.勾配の計算
+    # numerical_gradient：損失関数、初期値(x0やx1などの値)、正解データ、重み
+    grad = numerical_gradient(loss_function, x_batch, t_batch, w)
+    print("grad.shape: {}, grad: {}".format(grad.shape, grad))
+    # 5-3.パラメータを更新
+    w -= grad * lr
+    print("w.shape: {}, w: {}".format(w.shape, w))
+
+# 6.Accuracyの計算と表示
+# if i % epoch == 0:
