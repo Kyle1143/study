@@ -229,18 +229,26 @@ assert t_test.shape == (10000, 10), print("t_test Shape Size Error")
 # train_size：trainサイズ
 # lr：learning late(学習率)
 # batch_size：ミニバッチ数
-
-iter = 100
+iter = 1000
 train_size = x_train.shape[0]
 lr = 0.01
-batch_size = 100
+batch_size = 1000
 
-# 重みwをどこかで宣言しないといけない...ここであってるのか？
+# epochの設定
+epoch = train_size / batch_size
+
 # 入力 w：784✖️10
 w = np.random.rand(x_train.shape[1], t_train.shape[1])
 print("w.shape: {}, w: {}".format(w.shape, w))
 assert w.shape == (784, 10), print("w Shape Size Error")
 
+# リスト
+# train_accuracy_list：train_accuracyの値を格納するリスト
+# test_accuracy_list： test_accuracyの値を格納するリスト
+# train_loss_list：trainのlossの値を格納するリスト
+train_accuracy_list = []
+test_accuracy_list = []
+train_loss_list = []
 
 # 5-1.ミニバッチを作成
 # ミニバッチを取得
@@ -261,5 +269,31 @@ for i in range(iter):
     w -= grad * lr
     print("w.shape: {}, w: {}".format(w.shape, w))
 
-# 6.Accuracyの計算と表示
-# if i % epoch == 0:
+    loss = loss_function(x_batch, t_batch, w)
+    train_loss_list.append(loss)
+
+    # 5-4.Accuracyの計算と表示
+    # 1epoch終わる毎にデータを格納する
+    if i % epoch == 0:
+        train_accuracy = accuracy(x_train, t_train, w)
+        test_accuracy = accuracy(x_test, t_test, w)
+        train_accuracy_list.append(train_accuracy)
+        test_accuracy_list.append(test_accuracy)
+        print(
+            "train accuracy, test accuracy "
+            + str(train_accuracy)
+            + ", "
+            + str(test_accuracy)
+        )
+
+
+# 6.グラフの描画
+markers = {"train": "o", "test": "s"}
+x = np.arange(len(train_accuracy_list))
+plt.plot(x, train_accuracy_list, label="train accuracy")
+plt.plot(x, test_accuracy_list, label="test accuracy", linestyle="--")
+plt.xlabel("epochs")
+plt.ylabel("accuracy")
+plt.ylim(0, 1.0)
+plt.legend(loc="lower right")
+plt.show()
