@@ -231,8 +231,8 @@ assert t_test.shape == (10000, 10), print("t_test Shape Size Error")
 # batch_size：ミニバッチ数
 iter = 1000
 train_size = x_train.shape[0]
-lr = 0.01
-batch_size = 1000
+lr = 0.1
+batch_size = 100
 
 # epochの設定
 epoch = train_size / batch_size
@@ -250,13 +250,14 @@ train_accuracy_list = []
 test_accuracy_list = []
 train_loss_list = []
 
+
 # 5-1.ミニバッチを作成
 # ミニバッチを取得
 # batch：trainサイズ(60000)からbatchサイズ分ランダムに抽出する
 # x_batch：画像の特徴量(batch_size✖784)
 # t_batch：画像のラベル(batch_size✖️10)
 for i in range(iter):
-    print("Iteraion: ", (i + 1) * iter)
+    print("Iteraion: ", (i + 1))
     batch = np.random.choice(train_size, batch_size)
     x_batch = x_train[batch]  # 画像 100×784 (28*28=784)
     t_batch = t_train[batch]  # 画像のラベル 100×10
@@ -274,7 +275,8 @@ for i in range(iter):
 
     # 5-4.Accuracyの計算と表示
     # 1epoch終わる毎にデータを格納する
-    if i % epoch == 0:
+    # if i % epoch == 0:
+    if i % 100 == 0:
         train_accuracy = accuracy(x_train, t_train, w)
         test_accuracy = accuracy(x_test, t_test, w)
         train_accuracy_list.append(train_accuracy)
@@ -292,7 +294,7 @@ markers = {"train": "o", "test": "s"}
 x = np.arange(len(train_accuracy_list))
 plt.plot(x, train_accuracy_list, label="train accuracy")
 plt.plot(x, test_accuracy_list, label="test accuracy", linestyle="--")
-plt.xlabel("epochs")
+plt.xlabel("iteration")
 plt.ylabel("accuracy")
 plt.ylim(0, 1.0)
 plt.legend(loc="lower right")
