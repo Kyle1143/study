@@ -36,9 +36,9 @@ def softmax(x):
     if y.ndim == 1:
         max_x = np.max(x)  # max_x：入力xの最大値 OK
         # print("max_x:", max_x)
-        new_x = x - max_x  # exp：入力xの最大値から引く
-        # print("new_x:", new_x)
-        exp = np.exp(new_x)
+        x = x - max_x  # exp：入力xの最大値から引く
+        # print("x:", x)
+        exp = np.exp(x)
         # print("exp:", exp)
         sum_x = np.sum(exp)
         # print("sum_x:", sum_x)
@@ -63,16 +63,17 @@ def softmax(x):
 # 100: バッチサイズ, 784: 特徴量(28*28)
 # 入力 x:100のバッチサイズ、784の特徴量 (100x784(A✖️B)の行列)
 # 入力 w:784✖️10行列 (重み)
+# 出力 y：100✖️10
 # 出力 y:100のバッチサイズ、10の各ラベルの予測の確率 y_0 = (0.1, 0.01, 0, 0.7, 0.02,....)
 
 
 def predict(x, w):
-    seki = np.dot(x, w)
-    # print("seki:", seki)
+    z = np.dot(x, w)
+    # print("z:", z)
     # 各行の和が1になる
     # 非負になるはず
 
-    y = softmax(seki)
+    y = softmax(z)
 
     # ミニバッチ数1の時
     if y.ndim == 1:
@@ -143,7 +144,7 @@ def loss_function(x, t, w):
     return cross_entropy_error(y, t)  # スカラー
 
 
-# 2-4 数値微分(fが微分したい関数、xが初期値, tが正解データ、wが重み)
+# 2-4(1) 数値微分(fが微分したい関数、xが初期値, tが正解データ、wが重み)
 # 入力が満たすべき条件を列挙して、それを満たしているかを確認する
 # 入力 f:微分したい関数(後々損失関数を微分したい)
 # 入力 x:それについて微分する(x0,x1,..など)
@@ -183,6 +184,37 @@ def numerical_gradient(f, x, t, w):  # 引数：損失関数、初期値(x0やx1
             #         i, j, grad[i][j].shape, grad[i][j]
             #     )
             # )
+
+    return grad
+
+
+# 2-4(2) 数値微分(fが微分したい関数、xが初期値, tが正解データ、wが重み(wで微分したい))
+# 入力 f:微分したい関数(後々損失関数を微分したい)
+# 入力 x:初期値(x0,x1,..など)
+# 入力 t:100のバッチサイズ、10個の正解ラベルの種類 (100x10の行列)　t0 = (0,0,0,1,0,0,0,...)
+# tはone-hot
+# 入力 w:これで微分する(重みの更新更新)
+# 内容：微分したい関数の結果を表示
+# 出力 勾配 784✖️10行列
+# ①cross-entropyをy(softmax)で微分
+# ②y(softmax)をzで微分
+# ③zをwで微分
+
+
+def gradient(f, x, t, w):
+    grad = np.zeros_like(w)  # wと同じ形状の配列を生成(要素が全て0)
+    batch = x.shape[0]
+
+    # ①と②の積
+    # grad_12は微分①と微分②の結果の積
+    grad_12 = np.zeros_like(t)
+    n, k = grad_12.shape
+    for i in range(n):
+        for j in range(k):
+            grad_12[i][j] = (1 / batch) * (f[i][j] - t[i][j])
+
+    # ①、②、③のすべての積
+    grad = np.dot(x.T, grad_12)
 
     return grad
 
@@ -264,7 +296,8 @@ for i in range(iter):
 
     # 5-2.勾配の計算
     # numerical_gradient：損失関数、初期値(x0やx1などの値)、正解データ、重み
-    grad = numerical_gradient(loss_function, x_batch, t_batch, w)
+    # grad = numerical_gradient(loss_function, x_batch, t_batch, w)
+    grad = gradient(predict(x_batch, w), x_batch, t_batch, w)
     print("grad.shape: {}, grad: {}".format(grad.shape, grad))
     # 5-3.パラメータを更新
     w -= grad * lr
@@ -294,7 +327,7 @@ markers = {"train": "o", "test": "s"}
 x = np.arange(len(train_accuracy_list))
 plt.plot(x, train_accuracy_list, label="train accuracy")
 plt.plot(x, test_accuracy_list, label="test accuracy", linestyle="--")
-plt.xlabel("iteration")
+plt.xlabel("epochs")
 plt.ylabel("accuracy")
 plt.ylim(0, 1.0)
 plt.legend(loc="lower right")
